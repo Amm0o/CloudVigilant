@@ -16,7 +16,7 @@
 * Simple program that will rely on the HttpClient library to listen to on/off signals from the backend to turn the performance gatherer on/off.
 
 
-# CloudClient
+# Cloud Client
 
 ## Backend
 * Built in bun, will take the data from the performance gatherer and pass it to the front end.
