@@ -9,3 +9,6 @@ Repo for cloud performance tracer for linux machines
 
 # Clean the worspace
 * make clean
+
+# Push changes
+* ./push.sh
