@@ -2,6 +2,7 @@
 
 #include "./libs/ProcessLister.h"
 #include <iostream>
+#include <tuple>
 
 int main()
 {
@@ -10,7 +11,13 @@ int main()
 
     for (const auto &[pid, info] : processInfo)
     {
-        std::cout << "Process ID: " << pid << ", Name: " << info.first << ", Command: " << info.second << std::endl;
+        // Extract the process name and command from the tuple
+        const auto &[name, command, cpuUsage] = info;
+
+        std::cout << "CPU Usage: " << cpuUsage << "%, "
+                  << "Process ID: " << pid << ", "
+                  << "Name: " << name << ", "
+                  << "Command: " << command << std::endl;
     }
 
     return 0;

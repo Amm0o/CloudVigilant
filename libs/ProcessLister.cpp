@@ -7,15 +7,18 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <memory>
+#include <array>
+#include <cstdio>
 
 ProcessLister::ProcessLister()
 {
     procDirectory = "/proc";
 }
 
-std::map<std::string, std::pair<std::string, std::string>> ProcessLister::getProcessInfo()
+std::map<std::string, std::tuple<std::string, std::string, std::string>> ProcessLister::getProcessInfo()
 {
-    std::map<std::string, std::pair<std::string, std::string>> processInfo;
+    std::map<std::string, std::tuple<std::string, std::string, std::string>> processInfo;
     DIR *dir;
     struct dirent *ent;
 
@@ -28,7 +31,8 @@ std::map<std::string, std::pair<std::string, std::string>> ProcessLister::getPro
             {
                 std::string name = getProcessName(pid);
                 std::string command = getProcessCommand(pid);
-                processInfo[pid] = std::make_pair(name, command);
+                std::string cpuUsage = getProcessCpuUsage(pid);
+                processInfo[pid] = std::make_tuple(name, command, cpuUsage);
             }
         }
         // Release handle on directory
@@ -86,4 +90,30 @@ std::string ProcessLister::getProcessCommand(const std::string &pid)
     }
 
     return command.empty() ? "Unknown" : command;
+}
+
+// Get Process CPU Usage
+#include <iterator> // Add this line to include the <iterator> header file
+
+std::string ProcessLister::getProcessCpuUsage(const std::string &pid)
+{
+    std::string command = "ps -p " + pid + " -o %cpu --no-headers";
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+
+    if (!pipe)
+    {
+        throw std::runtime_error("popen() failed!");
+    }
+
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+    {
+        result += buffer.data();
+    }
+
+    // Remove trailing new lines or spaces
+    result.erase(std::remove_if(result.begin(), result.end(), isspace), result.end());
+
+    return result.empty() ? "Unknown" : result;
 }

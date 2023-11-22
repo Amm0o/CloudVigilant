@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -Wall -g
 
 # Define targets
-TARGET = cloud_vigilant
+TARGET = cloud_vigilante
 SRCS = Main.cpp libs/ProcessLister.cpp
 OBJS = $(SRCS:.cpp=.o)
 
