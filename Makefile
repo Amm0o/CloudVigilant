@@ -1,10 +1,12 @@
 # Compiler settings - Can be customized.
 CXX = g++
-CXXFLAGS = -Wall -g
+CXXFLAGS = -std=c++20 -Wall -g
+LDFLAGS = -lcurl
+
 
 # Define targets
 TARGET = cloud_vigilante
-SRCS = Main.cpp libs/ProcessLister.cpp
+SRCS = Main.cpp libs/ProcessLister.cpp libs/HttpService/HttpService.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
@@ -12,7 +14,8 @@ all: $(TARGET)
 
 # Linking
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
 
 # Compilation
 %.o: %.cpp

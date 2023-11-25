@@ -1,45 +1,70 @@
-## Components
-Data is sent from a client (which could be your `ProcessLister` application) to the backend server, and then from the backend server to the frontend.
-Classic client-server architecture with a frontend interface.
+# Application Architecture Plan
 
-### Client to Backend Connection
+#### Overview
+This plan describes the secure flow of data from client applications (ProcessLister) to the backend server, and then to the frontend interface. It includes device onboarding, user authentication via OAuth 2.0 with JWT for security, data storage with SQL, and real-time updates to the frontend.
 
-1. **Client Agent (ProcessLister App)**:
-   - The client collects process data (like CPU usage, process name, etc.).
-   - Periodically (every second), the client sends this data to the backend. This is  done using an HTTP POST request.
-   - The client can use a library like `libcurl` (for C++).
+---
 
-2. **Backend Server**:
-   - Receives data from the client via POST requests.
-   - Processes or stores this data as needed. This could involve saving to a database, performing some calculations, or preparing the data for the frontend.
-   - The backend will be implemented in **BUN**
+### Client-Backend Interaction
 
-### Backend to Frontend Connection
+**Client Onboarding**
+- Generate an onboarding script through the backend for each device, embedding **`tenantID`** and **`deviceID`**.
+- The script configures the client device, enabling it to send data to the backend.
 
-1. **Backend Server**:
-   - Provides an API endpoint for the frontend to fetch the processed data.
-   - This endpoint will be polled by the frontend or, for real-time updates, use WebSockets or Server-Sent Events (SSE).
+**Client Agent (ProcessLister)**
+- Periodically collect process data: process name, command, and CPU usage.
+- Authenticate with OAuth 2.0 provider to receive JWT.
+- Send process data to backend via HTTPS POST, including JWT for user authentication and device identifiers for data association.
 
-2. **Frontend Application**:
-   - Makes requests to the backend to fetch the data. This could be a simple fetch request if polling, or setting up a WebSocket/SSE connection for real-time updates.
-   - Displays the data from the backend in a user-friendly format(Graphics). The frontend will be built in Svelte/React
+---
 
-### Real-time Updates Consideration
+### Backend Server Responsibilities
 
-- If real-time updates are critical (e.g., the frontend needs to reflect changes in process data almost immediately), WebSockets or Server-Sent Events are preferable. These allow the server to push updates to the frontend without the need for constant polling.
-- For less time-sensitive updates, regular AJAX polling (where the frontend periodically makes HTTP requests to the backend for new data) could be sufficient and simpler to implement.
+**Device Registration and Association**
+- Link `tenantID` and `deviceID` with the user's account based on the JWT during the initial device registration.
+- Validate the JWT to ensure data is stored correctly per tenant and device.
 
-### Security and Performance
+**Data Processing and Storage**
+- Process incoming data and store it in an SQL database.
+- Implement data retention policies to automatically purge data older than 30 days.
 
-- Ensure secure data transmission by using HTTPS for all requests.
-- Authenticate requests from the client to the backend.
-- Consider the frequency of data updates and the performance implications. Sending data every second can be resource-intensive, so optimize both the client and server implementations for handling frequent requests.
+---
 
-### Example Flow
+### Backend-Frontend Communication
 
-1. **Data Collection**: The client (ProcessLister app) gathers process data.
-2. **Data Transmission**: Every second, the client sends this data to the backend server via a POST request.
-3. **Data Processing**: The backend server processes/stores this data and makes it available via an API endpoint.
-4. **Data Retrieval**: The frontend periodically requests this data from the backend (or receives it via a WebSocket/SSE connection) and updates the UI accordingly.
+**Secured API Endpoints**
+- Provide API endpoints for data retrieval, requiring JWT for access.
+- Use WebSockets or SSE for real-time data streaming, ensuring the frontend receives immediate updates.
 
-This architecture allows for a clear separation of concerns: the client focuses on data collection, the backend on data processing and storage, and the frontend on data presentation.
+**Frontend Application (Svelte)**
+- Offer a login interface for user authentication; upon login, obtain JWT.
+- Fetch and display process data using JWT to access the backend APIs.
+- Present data with interactive graphics and real-time capabilities.
+
+---
+
+### Security and Data Management
+
+**Encryption and Protocols**
+- Use HTTPS for all data transmissions to ensure security in transit.
+- Encrypt sensitive data at rest within the SQL database.
+
+**Access Control and Validation**
+- Validate JWT on each request to enforce access control.
+- Ensure users can only access data associated with their tenant.
+
+**Performance Considerations**
+- Optimize data transmission frequency to balance system load.
+- Implement rate limiting to protect against DDoS attacks and system abuse.
+
+---
+
+#### Implementation Flow
+
+1. **Onboarding**: Use backend-generated scripts to onboard devices with unique identifiers.
+2. **Registration**: Devices authenticate and register with the backend, establishing their tenant association.
+3. **Data Handling**: Collect and transmit data securely, processing and storing it with tenant and device context.
+4. **Database Management**: Apply retention policies for data lifecycle management.
+5. **User Interaction**: Authenticate users, retrieve and present data through the frontend, ensuring a secure and user-friendly experience.
+
+---

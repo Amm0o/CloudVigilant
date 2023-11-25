@@ -16,9 +16,9 @@ ProcessLister::ProcessLister()
     procDirectory = "/proc";
 }
 
-std::map<std::string, std::tuple<std::string, std::string, std::string>> ProcessLister::getProcessInfo()
+std::vector<ProcessInfo> ProcessLister::getProcessInfo()
 {
-    std::map<std::string, std::tuple<std::string, std::string, std::string>> processInfo;
+    std::vector<ProcessInfo> processList;
     DIR *dir;
     struct dirent *ent;
 
@@ -29,10 +29,12 @@ std::map<std::string, std::tuple<std::string, std::string, std::string>> Process
             std::string pid = ent->d_name;
             if (std::all_of(pid.begin(), pid.end(), isdigit))
             {
-                std::string name = getProcessName(pid);
-                std::string command = getProcessCommand(pid);
-                std::string cpuUsage = getProcessCpuUsage(pid);
-                processInfo[pid] = std::make_tuple(name, command, cpuUsage);
+                ProcessInfo process;
+                process.pid = pid;
+                process.name = getProcessName(pid);
+                process.command = getProcessCommand(pid);
+                process.cpuUsage = getProcessCpuUsage(pid);
+                processList.push_back(process);
             }
         }
         // Release handle on directory
@@ -43,7 +45,7 @@ std::map<std::string, std::tuple<std::string, std::string, std::string>> Process
         perror("Could not open /proc directory");
     }
 
-    return processInfo;
+    return processList;
 }
 
 // Get Process Name
