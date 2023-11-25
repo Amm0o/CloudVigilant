@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <thread>
 
 // Alias for the JSON object type
 using json = nlohmann::json;
@@ -12,35 +13,37 @@ using json = nlohmann::json;
 int main()
 {
     ProcessLister ProcessLister;
-    auto processInfo = ProcessLister.getProcessInfo();
-
-    json jsonData = json::array();
-
-    for (const auto &process : processInfo)
-    {
-        // Create JSON object for each process
-        json processJson = {
-            {"ProcessPID", process.pid},
-            {"ProcessName", process.name},
-            {"ProcessCommand", process.command},
-            {"ProcessCpuUsage", process.cpuUsage}};
-
-        // Add JSON object to JSON array
-        jsonData.push_back(processJson);
-
-        // Print process info to console for debugging
-        // std::cout << "Process ID: " << process.pid << ", "
-        //           << "Name: " << process.name << ", "
-        //           << "Command: " << process.command << ", "
-        //           << "CPU Usage: " << process.cpuUsage << "%" << std::endl;
-    }
-
-    // Coverting JSON data to string
-    std::string jsonString = jsonData.dump();
-
-    // Send JSON string to the API
     HttpService httpService;
-    httpService.sendData(jsonString, "http://localhost:8000");
+
+    while (true)
+    {
+        auto processInfo = ProcessLister.getProcessInfo();
+
+        json jsonData = json::array();
+
+        for (const auto &process : processInfo)
+        {
+            // Create JSON object for each process
+            json processJson = {
+                {"ProcessPID", process.pid},
+                {"ProcessName", process.name},
+                {"ProcessCommand", process.command},
+                {"ProcessCpuUsage", process.cpuUsage}};
+
+            // Add JSON object to JSON array
+            jsonData.push_back(processJson);
+        }
+
+        // Coverting JSON data to string
+        std::string jsonString = jsonData.dump();
+        // std::cout << jsonString << std::endl;
+
+        // Send JSON string to the API and get the response
+        httpService.sendData(jsonString, "https://localhost/api/dev/v1/processInfo");
+
+        // Sleep for 5 seconds
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
 
     return 0;
 }
