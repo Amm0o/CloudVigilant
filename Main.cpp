@@ -2,6 +2,7 @@
 
 #include "./libs/ProcessLister.h"
 #include "./libs/HttpService/HttpService.h"
+#include "./libs/DeviceInfo.h"
 #include <iostream>
 #include <vector>
 #include <nlohmann/json.hpp>
@@ -14,6 +15,10 @@ int main()
 {
     ProcessLister ProcessLister;
     HttpService httpService;
+    DeviceFetcher fetcher;
+
+    // Get the device information
+    DeviceInfo deviceInfo = fetcher.getDeviceInfo();
 
     while (true)
     {
@@ -25,6 +30,11 @@ int main()
         {
             // Create JSON object for each process
             json processJson = {
+                {"DeviceID", deviceInfo.deviceID},
+                {"TenantID", deviceInfo.tenantID},
+                {"DeviceName", deviceInfo.deviceName},
+                {"MacAddress", deviceInfo.macAddress},
+                {"IpAddress", deviceInfo.ipAddress},
                 {"ProcessPID", process.pid},
                 {"ProcessName", process.name},
                 {"ProcessCommand", process.command},

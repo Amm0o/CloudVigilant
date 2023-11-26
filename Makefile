@@ -6,7 +6,7 @@ LDFLAGS = -lcurl
 
 # Define targets
 TARGET = cloud_vigilante
-SRCS = Main.cpp libs/ProcessLister.cpp libs/HttpService/HttpService.cpp
+SRCS = Main.cpp libs/ProcessLister.cpp libs/HttpService/HttpService.cpp libs/DeviceInfo.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
