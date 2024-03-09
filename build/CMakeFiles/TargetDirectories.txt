@@ -1,0 +1,5 @@
+/home/angelo/Documents/projects/CloudVigilante/CloudVigilante/build/CMakeFiles/cloud_vigilante.dir
+/home/angelo/Documents/projects/CloudVigilante/CloudVigilante/build/CMakeFiles/edit_cache.dir
+/home/angelo/Documents/projects/CloudVigilante/CloudVigilante/build/CMakeFiles/rebuild_cache.dir
+/home/angelo/Documents/projects/CloudVigilante/CloudVigilante/build/_deps/json-build/CMakeFiles/edit_cache.dir
+/home/angelo/Documents/projects/CloudVigilante/CloudVigilante/build/_deps/json-build/CMakeFiles/rebuild_cache.dir
