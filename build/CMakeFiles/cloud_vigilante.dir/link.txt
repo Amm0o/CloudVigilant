@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/cloud_vigilante.dir/Main.cpp.o CMakeFiles/cloud_vigilante.dir/libs/ProcessLister.cpp.o CMakeFiles/cloud_vigilante.dir/libs/HttpService/HttpService.cpp.o CMakeFiles/cloud_vigilante.dir/libs/DeviceInfo.cpp.o -o cloud_vigilante  -lcurl 
