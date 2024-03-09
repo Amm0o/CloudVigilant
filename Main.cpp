@@ -44,12 +44,15 @@ int main()
             jsonData.push_back(processJson);
         }
 
+        std::cout << "This is the ip address: " << deviceInfo.ipAddress << std::endl;
+
         // Coverting JSON data to string
         std::string jsonString = jsonData.dump();
-        // std::cout << jsonString << std::endl;
+       //  std::cout << jsonString << std::endl;
 
         // Send JSON string to the API and get the response
-        httpService.sendData(jsonString, "https://localhost/api/dev/v1/processInfo");
+        // httpService.sendData(jsonString, "https://localhost/api/dev/v1/processInfo");
+
 
         // Sleep for 5 seconds
         std::this_thread::sleep_for(std::chrono::seconds(5));

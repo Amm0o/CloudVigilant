@@ -1,5 +1,5 @@
 # Compiler settings - Can be customized.
-CXX = g++
+CXX = gcc
 CXXFLAGS = -std=c++20 -Wall -g
 LDFLAGS = -lcurl
 
