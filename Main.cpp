@@ -26,15 +26,22 @@ int main()
 
         json jsonData = json::array();
 
+        // Grab the machine info  
+        json machineProperties = {
+            {"DeviceID", deviceInfo.deviceID},
+            {"TenantID", deviceInfo.tenantID},
+            {"DeviceName", deviceInfo.deviceName},
+            {"MacAddress", deviceInfo.macAddress},
+            {"IpAddress", deviceInfo.ipAddress}
+        };
+
+        // Push the info to the final json
+        jsonData.push_back(machineProperties);
+
         for (const auto &process : processInfo)
         {
             // Create JSON object for each process
             json processJson = {
-                {"DeviceID", deviceInfo.deviceID},
-                {"TenantID", deviceInfo.tenantID},
-                {"DeviceName", deviceInfo.deviceName},
-                {"MacAddress", deviceInfo.macAddress},
-                {"IpAddress", deviceInfo.ipAddress},
                 {"ProcessPID", process.pid},
                 {"ProcessName", process.name},
                 {"ProcessCommand", process.command},
@@ -44,11 +51,9 @@ int main()
             jsonData.push_back(processJson);
         }
 
-        std::cout << "This is the ip address: " << deviceInfo.ipAddress << std::endl;
 
-        // Coverting JSON data to string
-        std::string jsonString = jsonData.dump();
-       //  std::cout << jsonString << std::endl;
+        // Output Json for debugging
+        // std::cout << jsonData << std::endl;
 
         // Send JSON string to the API and get the response
         // httpService.sendData(jsonString, "https://localhost/api/dev/v1/processInfo");
