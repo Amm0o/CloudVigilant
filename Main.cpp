@@ -56,7 +56,11 @@ int main()
         // std::cout << jsonData << std::endl;
 
         // Send JSON string to the API and get the response
-        // httpService.sendData(jsonString, "https://localhost/api/dev/v1/processInfo");
+        // httpService.sendData(jsonData, "https://localhost/api/dev/v1/processInfo");
+        
+        // Converto to string to send data
+        std::string jsonString = jsonData.dump();
+        httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
 
 
         // Sleep for 5 seconds

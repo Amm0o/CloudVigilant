@@ -49,12 +49,12 @@ void HttpService::sendData(const std::string &jsonData, const std::string &apiEn
         // Check for errors
         if (res != CURLE_OK)
         {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            fprintf(stderr, "curl failed: %s\n", curl_easy_strerror(res));
         }
         else
         {
             // Print the response data
-            std::cout << "Received data: " << readBuffer << std::endl;
+            std::cout << "Response from server: " << readBuffer << std::endl;
         }
 
         // Clean up
