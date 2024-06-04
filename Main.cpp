@@ -1,8 +1,10 @@
 // Main.cpp
 
-#include "./libs/ProcessLister.h"
+#include "./libs/Monitoring/ProcessLister.h"
 #include "./libs/HttpService/HttpService.h"
-#include "./libs/DeviceInfo.h"
+#include "./libs/Monitoring/DeviceInfo.h"
+#include "./libs/Monitoring/SystemUsage.h"
+#include <cfenv>
 #include <iostream>
 #include <vector>
 #include <nlohmann/json.hpp>
@@ -16,15 +18,34 @@ int main()
     ProcessLister ProcessLister;
     HttpService httpService;
     DeviceFetcher fetcher;
+    
 
     // Get the device information
     DeviceInfo deviceInfo = fetcher.getDeviceInfo();
 
     while (true)
     {
-        auto processInfo = ProcessLister.getProcessInfo();
 
         json jsonData = json::array();
+
+        // Get resource consumption per process
+        auto processInfo = ProcessLister.getProcessInfo();
+
+        // Get total resource consumption
+        SystemUsage systemUsage;
+        MemoryInfo memoryInfo = systemUsage.getMemoryUsage();
+
+        json totalConsumption = {
+            {"TotalCpu", systemUsage.getCPUUsage()},
+            {"TotalMemory", memoryInfo.totalMemory},
+            {"UsedMemory", memoryInfo.usedMemory},
+            {"UsedMemoryP", memoryInfo.usedMemoryPercentege}
+
+        };
+
+
+        jsonData.push_back(totalConsumption);
+        
 
         // Grab the machine info  
         json machineProperties = {
