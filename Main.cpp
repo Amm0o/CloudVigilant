@@ -26,8 +26,6 @@ int main()
     while (true)
     {
 
-        json jsonData = json::array();
-
         // Get resource consumption per process
         auto processInfo = ProcessLister.getProcessInfo();
 
@@ -43,10 +41,6 @@ int main()
 
         };
 
-
-        jsonData.push_back(totalConsumption);
-        
-
         // Grab the machine info  
         json machineProperties = {
             {"DeviceID", deviceInfo.deviceID},
@@ -56,9 +50,8 @@ int main()
             {"IpAddress", deviceInfo.ipAddress}
         };
 
-        // Push the info to the final json
-        jsonData.push_back(machineProperties);
-
+        // Grab process performance metrics
+        json processArray = json::array();
         for (const auto &process : processInfo)
         {
             // Create JSON object for each process
@@ -67,21 +60,28 @@ int main()
                 {"ProcessName", process.name},
                 {"ProcessCommand", process.command},
                 {"ProcessCpuUsage", process.cpuUsage}};
-
-            // Add JSON object to JSON array
-            jsonData.push_back(processJson);
+            
+            // Add each process to the process array
+            processArray.push_back(processJson);
         }
+
+        // Build the final json
+        json jsonData = {
+            {"totalConsumption", totalConsumption},
+            {"machineProperties", machineProperties},
+            {"processInfo", processArray}
+        };
 
 
         // Output Json for debugging
-        // std::cout << jsonData << std::endl;
+        std::cout << jsonData << std::endl;
 
         // Send JSON string to the API and get the response
         // httpService.sendData(jsonData, "https://localhost/api/dev/v1/processInfo");
         
         // Converto to string to send data
         std::string jsonString = jsonData.dump();
-        httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
+        // httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
 
 
         // Sleep for 5 seconds
