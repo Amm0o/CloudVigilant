@@ -56,10 +56,10 @@ int main()
         {
             // Create JSON object for each process
             json processJson = {
-                {"ProcessPID", process.pid},
+                {"ProcessPID", process.pid == "Unknown" ? -1 : std::stoi(process.pid)},
                 {"ProcessName", process.name},
                 {"ProcessCommand", process.command},
-                {"ProcessCpuUsage", process.cpuUsage}};
+                {"ProcessCpuUsage", process.cpuUsage == "Unknown" ? -1 : std::stoi(process.cpuUsage)}};
             
             // Add each process to the process array
             processArray.push_back(processJson);
@@ -74,14 +74,15 @@ int main()
 
 
         // Output Json for debugging
-        std::cout << jsonData << std::endl;
+        // std::cout << jsonData << std::endl;
 
         // Send JSON string to the API and get the response
         // httpService.sendData(jsonData, "https://localhost/api/dev/v1/processInfo");
         
         // Converto to string to send data
         std::string jsonString = jsonData.dump();
-        // httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
+        // std::cout << jsonString << std::endl;
+        httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
 
 
         // Sleep for 5 seconds
