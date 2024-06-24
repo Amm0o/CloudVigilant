@@ -10,6 +10,8 @@
 #include <memory>
 #include <array>
 #include <cstdio>
+#include <iterator> 
+
 
 ProcessLister::ProcessLister()
 {
@@ -34,6 +36,7 @@ std::vector<ProcessInfo> ProcessLister::getProcessInfo()
                 process.name = getProcessName(pid);
                 process.command = getProcessCommand(pid);
                 process.cpuUsage = getProcessCpuUsage(pid);
+                process.memUsage = getProcessMemUsage(pid);
                 processList.push_back(process);
             }
         }
@@ -95,8 +98,6 @@ std::string ProcessLister::getProcessCommand(const std::string &pid)
 }
 
 // Get Process CPU Usage
-#include <iterator> // Add this line to include the <iterator> header file
-
 std::string ProcessLister::getProcessCpuUsage(const std::string &pid)
 {
     std::string command = "ps -p " + pid + " -o %cpu --no-headers";
@@ -118,4 +119,52 @@ std::string ProcessLister::getProcessCpuUsage(const std::string &pid)
     result.erase(std::remove_if(result.begin(), result.end(), isspace), result.end());
 
     return result.empty() ? "Unknown" : result;
+}
+
+// Get Process RAM usage
+// This function will return RSS (Resident Set Size) in mbs from /proc/[pid]/statm
+std::string ProcessLister::getProcessMemUsage(const std::string &pid)
+{
+    std::string statmPath = procDirectory + "/" + pid + "/statm";
+    std::ifstream statmFile(statmPath);
+    std::string line;
+    long rss = 0;
+
+    if (!statmFile.is_open()) {
+        std::cerr << "Error: Could not open file " << statmPath << std::endl;
+        return "-1";
+    }
+
+    try {
+        if (std::getline(statmFile, line)) {
+            std::istringstream iss(line);
+            std::string value;
+            if (iss >> value >> value) {
+                rss = std::stol(value) * sysconf(_SC_PAGESIZE) / 1024; // Convert pages to KB and then to MB
+            } else {
+                std::cerr << "Error: Failed to parse RSS value from statm for PID " << pid << std::endl;
+                return "-1";
+            }
+        }
+
+        if (statmFile.bad()) {
+            std::cerr << "Error: I/O error while reading file " << statmPath << std::endl;
+            return "-1";
+        }
+
+        statmFile.close();
+
+
+        rss /= 1024; // Convert KB to MB
+
+        // std::cout << "RSS: " << rss << " for PID: "<< pid << std::endl;
+        return std::to_string(rss);
+
+    } catch (const std::exception &e) {
+        std::cerr << "Exception: " << e.what() << " while processing PID " << pid << std::endl;
+        return "-1";
+    } catch (...) {
+        std::cerr << "Unknown error occurred while processing PID " << pid << std::endl;
+        return "-1";
+    }
 }

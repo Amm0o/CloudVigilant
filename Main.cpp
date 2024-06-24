@@ -47,8 +47,11 @@ int main()
             {"TenantID", deviceInfo.tenantID},
             {"DeviceName", deviceInfo.deviceName},
             {"MacAddress", deviceInfo.macAddress},
-            {"IpAddress", deviceInfo.ipAddress}
+            {"IpAddress", deviceInfo.ipAddress},
+            {"TimeStamp", deviceInfo.timeStamp}
         };
+
+        std::cout << "TimeStamp: " << deviceInfo.timeStamp << std::endl;
 
         // Grab process performance metrics
         json processArray = json::array();
@@ -59,8 +62,11 @@ int main()
                 {"ProcessPID", process.pid == "Unknown" ? -1 : std::stoi(process.pid)},
                 {"ProcessName", process.name},
                 {"ProcessCommand", process.command},
-                {"ProcessCpuUsage", process.cpuUsage == "Unknown" ? -1 : std::stoi(process.cpuUsage)}};
-            
+                {"ProcessCpuUsage", process.cpuUsage == "Unknown" ? -1 : std::stoi(process.cpuUsage)},
+                {"ProcessMemUsage", process.memUsage == "Unknown" ? -1 : std::stoi(process.memUsage)}
+                };
+
+
             // Add each process to the process array
             processArray.push_back(processJson);
         }

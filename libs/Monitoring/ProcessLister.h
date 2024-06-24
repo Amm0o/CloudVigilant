@@ -13,6 +13,7 @@ struct ProcessInfo
     std::string name;
     std::string command;
     std::string cpuUsage;
+    std::string memUsage;
 };
 
 // ProcessLister class
@@ -24,7 +25,7 @@ public:
     std::string getProcessName(const std::string &pid);
     std::string getProcessCommand(const std::string &pid);
     std::string getProcessCpuUsage(const std::string &pid);
-
+    std::string getProcessMemUsage(const std::string &pid);
 private:
     std::string procDirectory;
 };

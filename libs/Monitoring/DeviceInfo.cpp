@@ -133,6 +133,27 @@ std::string DeviceFetcher::getIpAddress()
     return ipv4Cache[0];
 }
 
+// Get Current TimeStamp
+std::string DeviceFetcher::getTimeStamp() {
+
+    // Get current time of system clock
+    auto now = std::chrono::system_clock::now();
+
+    // Convert the time point to a time_t, which represents the calendar time
+    std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+    
+    // Convert the time_t to a tm structure representing the local time
+    std::tm now_tm = *std::localtime(&now_time_t);
+    
+    // Create a stringstream to format the timestamp
+    std::ostringstream timestamp;
+    
+    // Format the timestamp as YYYY-MM-DD HH:MM:SS
+    timestamp << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+    
+    return timestamp.str();
+}
+
 DeviceInfo DeviceFetcher::getDeviceInfo()
 {
     DeviceInfo info;
@@ -143,6 +164,9 @@ DeviceInfo DeviceFetcher::getDeviceInfo()
     info.deviceName = getDeviceName();
     info.macAddress = getMacAddress();
     info.ipAddress = getIpAddress();
+    info.timeStamp = getTimeStamp();
 
     return info;
 }
+
+

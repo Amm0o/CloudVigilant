@@ -13,6 +13,7 @@ struct DeviceInfo
     std::string deviceName;
     std::string macAddress;
     std::string ipAddress;
+    std::string timeStamp;
 };
 
 class DeviceFetcher
@@ -27,6 +28,7 @@ private:
     std::string getMacAddress();
     std::string getIpAddress();
     std::string execCommand(const char *cmd);
+    std::string getTimeStamp();
 };
 
 #endif // DEVICEINFO_H
