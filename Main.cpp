@@ -18,13 +18,11 @@ int main()
     ProcessLister ProcessLister;
     HttpService httpService;
     DeviceFetcher fetcher;
-    
-
-    // Get the device information
-    DeviceInfo deviceInfo = fetcher.getDeviceInfo();
 
     while (true)
     {
+        // Get the device information
+        DeviceInfo deviceInfo = fetcher.getDeviceInfo();
 
         // Get resource consumption per process
         auto processInfo = ProcessLister.getProcessInfo();
@@ -41,15 +39,14 @@ int main()
 
         };
 
-        // Grab the machine info  
+        // Grab the machine info
         json machineProperties = {
             {"DeviceID", deviceInfo.deviceID},
             {"TenantID", deviceInfo.tenantID},
             {"DeviceName", deviceInfo.deviceName},
             {"MacAddress", deviceInfo.macAddress},
             {"IpAddress", deviceInfo.ipAddress},
-            {"TimeStamp", deviceInfo.timeStamp}
-        };
+            {"TimeStamp", deviceInfo.timeStamp}};
 
         std::cout << "TimeStamp: " << deviceInfo.timeStamp << std::endl;
 
@@ -63,9 +60,7 @@ int main()
                 {"ProcessName", process.name},
                 {"ProcessCommand", process.command},
                 {"ProcessCpuUsage", process.cpuUsage == "Unknown" ? -1 : std::stoi(process.cpuUsage)},
-                {"ProcessMemUsage", process.memUsage == "Unknown" ? -1 : std::stoi(process.memUsage)}
-                };
-
+                {"ProcessMemUsage", process.memUsage == "Unknown" ? -1 : std::stoi(process.memUsage)}};
 
             // Add each process to the process array
             processArray.push_back(processJson);
@@ -75,21 +70,18 @@ int main()
         json jsonData = {
             {"totalConsumption", totalConsumption},
             {"machineProperties", machineProperties},
-            {"processInfo", processArray}
-        };
-
+            {"processInfo", processArray}};
 
         // Output Json for debugging
         // std::cout << jsonData << std::endl;
 
         // Send JSON string to the API and get the response
         // httpService.sendData(jsonData, "https://localhost/api/dev/v1/processInfo");
-        
+
         // Converto to string to send data
         std::string jsonString = jsonData.dump();
         // std::cout << jsonString << std::endl;
         httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
-
 
         // Sleep for 5 seconds
         std::this_thread::sleep_for(std::chrono::seconds(5));
