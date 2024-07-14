@@ -75,16 +75,21 @@ int main()
         // Output Json for debugging
         // std::cout << jsonData << std::endl;
 
-        // Send JSON string to the API and get the response
-        // httpService.sendData(jsonData, "https://localhost/api/dev/v1/processInfo");
-
         // Converto to string to send data
         std::string jsonString = jsonData.dump();
         // std::cout << jsonString << std::endl;
-        httpService.sendData(jsonString, "http://localhost:8080/api/v1/postMetrics");
+#ifdef PROD
+        httpService.sendData(jsonString, "http://cloud-vigilante.anoliveira.com/api/v1/postMetrics");
+#else
+        httpService.sendData(jsonString, "http://localhost:8080/api/v1/postmetrics");
+#endif
 
+#ifdef PROD
         // Sleep for 5 seconds
+        std::this_thread::sleep_for(std::chrono::seconds(30));
+#else
         std::this_thread::sleep_for(std::chrono::seconds(5));
+#endif
     }
 
     return 0;

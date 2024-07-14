@@ -3,7 +3,6 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall -g
 LDFLAGS = -lcurl
 
-
 # Define targets
 TARGET = cloud_vigilante
 SRCS = Main.cpp libs/Monitoring/ProcessLister.cpp libs/HttpService/HttpService.cpp libs/Monitoring/DeviceInfo.cpp libs/Monitoring/SystemUsage.cpp
@@ -17,7 +16,6 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 
-
 # Compilation
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -28,3 +26,7 @@ clean:
 
 # Phony targets
 .PHONY: all clean
+
+# Production build
+prod: CXXFLAGS += -DPROD
+prod: clean $(TARGET)
