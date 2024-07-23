@@ -79,7 +79,7 @@ int main()
         std::string jsonString = jsonData.dump();
         // std::cout << jsonString << std::endl;
 #ifdef PROD
-        httpService.sendData(jsonString, "http://cloud-vigilante.anoliveira.com/api/v1/postMetrics");
+        httpService.sendData(jsonString, "http://cloudvigilante.anoliveira.com/api/v1/postMetrics");
 #else
         httpService.sendData(jsonString, "http://localhost:8080/api/v1/postmetrics");
 #endif
