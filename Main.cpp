@@ -30,14 +30,18 @@ int main()
         // Get total resource consumption
         SystemUsage systemUsage;
         MemoryInfo memoryInfo = systemUsage.getMemoryUsage();
+        DiskInfo diskInfo = systemUsage.getDiskUsage();
 
         json totalConsumption = {
             {"TotalCpu", systemUsage.getCPUUsage()},
             {"TotalMemory", memoryInfo.totalMemory},
             {"UsedMemory", memoryInfo.usedMemory},
-            {"UsedMemoryP", memoryInfo.usedMemoryPercentege}
+            {"UsedMemoryP", memoryInfo.usedMemoryPercentege},
+            {"TotalDisk", diskInfo.total},
+            {"UsedDisk", diskInfo.used},
+            {"FreeDisk", diskInfo.free}};
 
-        };
+        std::cout << "Disk Usage: " << diskInfo.used << std::endl;
 
         // Grab the machine info
         json machineProperties = {

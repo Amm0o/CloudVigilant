@@ -4,26 +4,32 @@
 #include <vector>
 #include <string>
 
-
-struct MemoryInfo {
+struct MemoryInfo
+{
 
     long totalMemory;
     long usedMemory;
     double usedMemoryPercentege;
-
 };
 
-class SystemUsage {
+struct DiskInfo
+{
+    long long total;
+    long long used;
+    long long free;
+};
+
+class SystemUsage
+{
 
 public:
     double getCPUUsage();
     MemoryInfo getMemoryUsage();
+    DiskInfo getDiskUsage();
+
 private:
     std::vector<long> getCPUTimes();
-    void parseLine(const std::string& line, long& value);
-
+    void parseLine(const std::string &line, long &value);
 };
 
-
 #endif
-
